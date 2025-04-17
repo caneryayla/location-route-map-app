@@ -107,6 +107,7 @@ const RouteModal = ({
                       borderRadius="lg"
                       textAlign="center"
                       gap={3}
+                      py={4}
                     >
                       <FaMapMarkedAlt size={60} color="black" />
 
