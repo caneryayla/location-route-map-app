@@ -1,12 +1,6 @@
 "use client";
 
-import {
-  ColorPicker,
-  HStack,
-  Portal,
-  parseColor,
-  type Color,
-} from "@chakra-ui/react";
+import { ColorPicker, HStack, Portal, parseColor } from "@chakra-ui/react";
 import React from "react";
 
 interface ColorPickerSelectProps {

@@ -48,7 +48,10 @@ const DrawRoutePage = () => {
   }, [locations, userLocation]);
 
   const origin = sortedLocations[0];
-  const destination = sortedLocations[sortedLocations.length - 1];
+  const destination =
+    sortedLocations.length > 1
+      ? sortedLocations[sortedLocations.length - 1]
+      : null;
   const waypoints = sortedLocations.slice(1, -1);
 
   useEffect(() => {

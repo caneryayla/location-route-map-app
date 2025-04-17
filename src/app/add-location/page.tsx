@@ -1,6 +1,11 @@
 "use client";
 import { useLocationStore } from "@/store/useLocationStore";
-import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
+import {
+  APIProvider,
+  Map,
+  Marker,
+  MapMouseEvent,
+} from "@vis.gl/react-google-maps";
 import { Fragment, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import { toaster } from "@/components/ui/toaster";
@@ -27,10 +32,10 @@ const AddLocationPage = () => {
 
   const { addLocation } = useLocationStore();
 
-  const handleMapClick = async (event: any) => {
+  const handleMapClick = async (event: MapMouseEvent) => {
     const clickedLatLng = event.detail?.latLng;
     if (clickedLatLng) {
-      setMarker((prev: any) => ({
+      setMarker((prev) => ({
         ...prev,
         lat: clickedLatLng.lat,
         lng: clickedLatLng.lng,
@@ -51,7 +56,7 @@ const AddLocationPage = () => {
         }));
 
         setIsGeoCodeLoading(false);
-      } catch (error) {
+      } catch {
         setIsGeoCodeLoading(false);
       }
     }

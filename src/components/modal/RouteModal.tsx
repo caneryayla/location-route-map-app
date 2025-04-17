@@ -26,8 +26,8 @@ type LatLng = {
 interface RouteModalProps {
   isOpen: boolean;
   onOpenChange: (open: boolean) => void;
-  origin: LatLng;
-  destination: LatLng;
+  origin: LatLng | null;
+  destination: LatLng | null;
   waypoints: LatLng[];
 }
 
@@ -74,7 +74,7 @@ const RouteModal = ({
                   {allPoints.length > 0 && (
                     <Fragment>
                       {allPoints?.map((point, index) => (
-                        <Fragment key={point?.id}>
+                        <Fragment key={index}>
                           <Box
                             px={4}
                             py={2}

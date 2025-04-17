@@ -1,6 +1,11 @@
 "use client";
 import { useLocationStore } from "@/store/useLocationStore";
-import { APIProvider, Map, Marker } from "@vis.gl/react-google-maps";
+import {
+  APIProvider,
+  Map,
+  Marker,
+  MapMouseEvent,
+} from "@vis.gl/react-google-maps";
 import { Fragment, useEffect, useState } from "react";
 import { toaster } from "@/components/ui/toaster";
 import LocationSelectCard from "@/components/card/LocationSelectCard";
@@ -28,10 +33,10 @@ const EditLocationPage = () => {
     name: "",
   });
 
-  const handleMapClick = async (event: any) => {
+  const handleMapClick = async (event: MapMouseEvent) => {
     const clickedLatLng = event.detail?.latLng;
     if (clickedLatLng) {
-      setMarker((prev: any) => ({
+      setMarker((prev) => ({
         ...prev,
         lat: clickedLatLng.lat,
         lng: clickedLatLng.lng,
@@ -52,32 +57,24 @@ const EditLocationPage = () => {
         }));
 
         setIsGeoCodeLoading(false);
-      } catch (error) {
+      } catch {
         setIsGeoCodeLoading(false);
       }
     }
   };
 
-  const handleSetMarkerValue = () => {
+  useEffect(() => {
     const locationValues = locations?.find((loc) => loc?.id === id);
-    if (locationValues) {
-      setMarker({
-        lat: locationValues.lat,
-        lng: locationValues.lng,
-        color: locationValues.color as string,
-        name: locationValues.name || "",
-      });
-    }
 
-    if (!locationValues) {
-      setMarker({
-        lat: defaultLat,
-        lng: defaultLng,
-        color: "#000000",
-        name: "",
-      });
-    }
-  };
+    if (!locationValues) return;
+
+    setMarker({
+      lat: locationValues.lat,
+      lng: locationValues.lng,
+      color: locationValues.color as string,
+      name: locationValues.name || "",
+    });
+  }, [id, locations]);
 
   const handleSaveMarker = () => {
     editLocation(id, {
@@ -99,10 +96,6 @@ const EditLocationPage = () => {
   const handleGiveUp = () => {
     router.back();
   };
-
-  useEffect(() => {
-    handleSetMarkerValue();
-  }, [id]);
 
   return (
     <APIProvider apiKey={API_KEY}>
