@@ -116,11 +116,11 @@ const RouteModal = ({
                         fontWeight="semibold"
                         color="gray.700"
                       >
-                        Henüz hiç lokasyon eklenmedi.
+                        Henüz hiç konum eklenmedi.
                       </Text>
 
                       <Text fontSize="md" color="gray.500" maxW="md">
-                        Rota oluşturmak için lütfen lokasyon ekleyiniz.
+                        Rota oluşturmak için lütfen konum ekleyiniz.
                       </Text>
 
                       <Button
@@ -131,7 +131,7 @@ const RouteModal = ({
                         _hover={{ bg: "black", color: "white" }}
                         onClick={() => router.push("/add-location")}
                       >
-                        Lokasyon Ekle
+                        Konum Ekle
                       </Button>
                     </Flex>
                   )}

@@ -35,7 +35,7 @@ const Page = () => {
 
     toaster.create({
       title: "Başarılı",
-      description: "Lokasyon başarıyla silindi.",
+      description: "Konum başarıyla silindi.",
       type: "success",
       duration: 3000,
     });
@@ -44,8 +44,8 @@ const Page = () => {
   return (
     <Box bg={"white"} minH={"calc(100vh - 56px)"}>
       <AlertDialog
-        title="Lokasyonu Sil"
-        description="Bu lokasyonu silmek istediğinize emin misiniz?"
+        title="Konumu Sil"
+        description="Bu konumu silmek istediğinize emin misiniz?"
         isOpen={openAlert}
         onOpenChange={() => {
           setOpenAlert(false);
@@ -59,7 +59,7 @@ const Page = () => {
         <VStack w={"full"} gap={4} pt={5} px={5} pb={20}>
           <HStack w={"full"} justify="space-between">
             <Text fontSize="xl" fontWeight="bold" color="black">
-              Lokasyonlarım
+              Konumlarım
             </Text>
 
             <Button
@@ -88,7 +88,7 @@ const Page = () => {
                   id={location?.id}
                   lat={location?.lat}
                   lng={location?.lng}
-                  name={location?.name || "Lokasyon"}
+                  name={location?.name || "Konum Adı"}
                   color={location?.color as string}
                   onDelete={(id) => {
                     handleAlertOpenPress(id);
@@ -117,11 +117,11 @@ const Page = () => {
           <FaMapMarkedAlt size={100} color="black" />
 
           <Text fontSize="2xl" fontWeight="semibold" color="gray.700">
-            Henüz hiç lokasyon eklenmedi.
+            Henüz hiç konum eklenmedi.
           </Text>
 
           <Text fontSize="md" color="gray.500" maxW="md">
-            Konumlarınızı görüntüleyebilmek için ilk lokasyonunuzu oluşturun.
+            Konumlarınızı görüntüleyebilmek için lütfen bir konum ekleyin.
           </Text>
 
           <Button
@@ -132,7 +132,7 @@ const Page = () => {
             _hover={{ bg: "black", color: "white" }}
             onClick={() => router.push("/add-location")}
           >
-            Lokasyon Ekle
+            Konum Ekle
           </Button>
         </Flex>
       )}
