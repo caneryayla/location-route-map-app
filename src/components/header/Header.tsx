@@ -12,7 +12,7 @@ import {
 import { useRouter, usePathname } from "next/navigation";
 import { FaMapMarkerAlt } from "react-icons/fa";
 import { RxTextAlignJustify } from "react-icons/rx";
-import React, { useRef } from "react";
+import React, { Fragment, useRef } from "react";
 import { FaAngleRight } from "react-icons/fa6";
 
 const Header = () => {
@@ -55,10 +55,10 @@ const Header = () => {
         </Flex>
 
         {isMobile ? (
-          <>
+          <Fragment>
             <Drawer.Root placement={"end"} initialFocusEl={() => ref.current}>
               <Drawer.Trigger asChild>
-                <Box>
+                <Box cursor={"pointer"}>
                   <RxTextAlignJustify size={28} color="black" />
                 </Box>
               </Drawer.Trigger>
@@ -98,7 +98,7 @@ const Header = () => {
                 </Drawer.Positioner>
               </Portal>
             </Drawer.Root>
-          </>
+          </Fragment>
         ) : (
           <Flex gap={4}>
             {headerMenu.map((item) => {
