@@ -12,6 +12,8 @@ import {
   HStack,
 } from "@chakra-ui/react";
 import { IoArrowForwardSharp } from "react-icons/io5";
+import { useRouter } from "next/navigation";
+import { FaMapMarkedAlt } from "react-icons/fa";
 
 type LatLng = {
   lat: number;
@@ -36,7 +38,10 @@ const RouteModal = ({
   destination,
   waypoints,
 }: RouteModalProps) => {
-  const allPoints = [origin, ...waypoints, destination];
+  const router = useRouter();
+  const allPoints = [origin, ...waypoints, destination].filter(
+    (point) => point !== undefined && point !== null
+  );
 
   return (
     <HStack wrap="wrap">
@@ -66,27 +71,69 @@ const RouteModal = ({
                   justify="flex-start"
                   wrap="wrap"
                 >
-                  {allPoints?.map((point, index) => (
-                    <Fragment key={point?.id}>
-                      <Box
-                        px={4}
-                        py={2}
-                        borderRadius="md"
-                        bg={point?.color ?? "gray.100"}
-                        color="white"
-                        textAlign="center"
-                        minW="100px"
-                      >
-                        <Text fontWeight="medium" fontSize="sm">
-                          {point?.name || `Konum ${index + 1}`}
-                        </Text>
-                      </Box>
+                  {allPoints.length > 0 && (
+                    <Fragment>
+                      {allPoints?.map((point, index) => (
+                        <Fragment key={point?.id}>
+                          <Box
+                            px={4}
+                            py={2}
+                            borderRadius="md"
+                            bg={point?.color ?? "black"}
+                            color="white"
+                            textAlign="center"
+                            minW="100px"
+                          >
+                            <Text fontWeight="medium" fontSize="sm">
+                              {point?.name || `Konum ${index + 1}`}
+                            </Text>
+                          </Box>
 
-                      {index !== allPoints?.length - 1 && (
-                        <IoArrowForwardSharp size={24} color="black" />
-                      )}
+                          {index !== allPoints?.length - 1 && (
+                            <IoArrowForwardSharp size={24} color="black" />
+                          )}
+                        </Fragment>
+                      ))}
                     </Fragment>
-                  ))}
+                  )}
+
+                  {allPoints.length === 0 && (
+                    <Flex
+                      w={"full"}
+                      direction="column"
+                      align="center"
+                      justify="center"
+                      bg="gray.50"
+                      borderRadius="lg"
+                      textAlign="center"
+                      gap={3}
+                    >
+                      <FaMapMarkedAlt size={60} color="black" />
+
+                      <Text
+                        fontSize="md"
+                        fontWeight="semibold"
+                        color="gray.700"
+                      >
+                        Henüz hiç lokasyon eklenmedi.
+                      </Text>
+
+                      <Text fontSize="md" color="gray.500" maxW="md">
+                        Rota oluşturmak için lütfen lokasyon ekleyiniz.
+                      </Text>
+
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        color="black"
+                        borderColor="gray.400"
+                        _hover={{ bg: "black", color: "white" }}
+                        onClick={() => router.push("/add-location")}
+                      >
+                        Lokasyon Ekle
+                      </Button>
+                    </Flex>
+                  )}
                 </Flex>
               </Drawer.Body>
 

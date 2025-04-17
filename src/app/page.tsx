@@ -117,7 +117,7 @@ const Page = () => {
           <FaMapMarkedAlt size={100} color="black" />
 
           <Text fontSize="2xl" fontWeight="semibold" color="gray.700">
-            Henüz hiç lokasyon eklenmedi
+            Henüz hiç lokasyon eklenmedi.
           </Text>
 
           <Text fontSize="md" color="gray.500" maxW="md">
