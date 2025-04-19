@@ -15,7 +15,7 @@ interface RouteProps {
   weight?: number;
 }
 
-const Route = ({
+const DrawRoute = ({
   origin,
   destination,
   waypoints = [],
@@ -110,4 +110,4 @@ const Route = ({
   return null;
 };
 
-export default Route;
+export default DrawRoute;

@@ -5,14 +5,13 @@ import { APIProvider, Map } from "@vis.gl/react-google-maps";
 import { useLocationStore } from "@/store/useLocationStore";
 import { Box, Button } from "@chakra-ui/react";
 import RouteModal from "@/components/modal/RouteModal";
-
 import useUserLocation from "@/hooks/useUserLocation";
 import useSortedLocations from "@/hooks/useSortedLocations";
 import UserMarker from "@/components/map/UserMarker";
 import CurrentLocationInfoWindow from "@/components/map/CurrentLocationInfoWindow";
 import LocationMarker from "@/components/map/LocationMarker";
 import SelectedLocationInfoWindow from "@/components/map/SelectedLocationInfoWindow";
-import Route from "@/components/map/Route";
+import DrawRoute from "@/components/map/DrawRoute";
 
 const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API as string;
 
@@ -78,7 +77,7 @@ const DrawRoutePage = () => {
         )}
 
         {origin && destination && (
-          <Route
+          <DrawRoute
             origin={origin}
             destination={destination}
             waypoints={waypoints}
