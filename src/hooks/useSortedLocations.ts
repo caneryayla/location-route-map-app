@@ -12,7 +12,6 @@ interface LocationItem extends LatLng {
   name: string | null;
 }
 
-// Custom hook to calculate distances
 const useLocationDistances = (
   locations: LocationItem[],
   userLocation: LatLng | null
@@ -20,7 +19,6 @@ const useLocationDistances = (
   const distances = useMemo(() => {
     if (!userLocation) return locations.map(() => 0);
 
-    // Calculate distances for each location
     return locations.map((location) => {
       const distance = getDistance(userLocation, location);
       return distance;
@@ -34,10 +32,8 @@ const useSortedLocations = (
   locations: LocationItem[],
   userLocation: LatLng | null
 ): LocationItem[] => {
-  // Get distances using the custom hook
   const distances = useLocationDistances(locations, userLocation);
 
-  // Sort locations based on distances
   return useMemo(() => {
     if (!userLocation) return locations;
 

@@ -4,7 +4,6 @@ import { useEffect, useState } from "react";
 import { useMap, useMapsLibrary } from "@vis.gl/react-google-maps";
 
 type LatLng = { lat: number; lng: number };
-type LatLngLiteral = google.maps.LatLngLiteral;
 
 interface RouteProps {
   origin: LatLng;
@@ -13,6 +12,7 @@ interface RouteProps {
   travelMode?: "DRIVE" | "WALK" | "BICYCLE";
   color?: string;
   weight?: number;
+  fitBounds?: boolean;
 }
 
 const DrawRoute = ({
@@ -22,19 +22,16 @@ const DrawRoute = ({
   travelMode = "DRIVE",
   color = "#1e90ff",
   weight = 5,
+  fitBounds = false,
 }: RouteProps) => {
   const map = useMap();
   const routesLibrary = useMapsLibrary("routes");
   const [polyline, setPolyline] = useState<google.maps.Polyline | null>(null);
-  const [geometry, setGeometry] = useState<LatLngLiteral[]>([]);
 
   useEffect(() => {
     if (!map || !routesLibrary) return;
 
     const directionsService = new routesLibrary.DirectionsService();
-    const directionsRenderer = new routesLibrary.DirectionsRenderer({
-      suppressMarkers: true,
-    });
 
     const request: google.maps.DirectionsRequest = {
       origin,
@@ -57,30 +54,31 @@ const DrawRoute = ({
           lat: point.lat(),
           lng: point.lng(),
         }));
-        setGeometry(path);
 
-        // Create a new polyline
         const newPolyline = new google.maps.Polyline({
-          path: path,
+          path,
           strokeColor: color,
           strokeWeight: weight,
-          map: map,
+          map,
         });
 
-        // Set the polyline state
+        if (polyline) {
+          polyline.setMap(null);
+        }
+
         setPolyline(newPolyline);
 
-        // Fit the map to the bounds of the route
-        const bounds = new google.maps.LatLngBounds();
-        path.forEach((point) => bounds.extend(point));
-        map.fitBounds(bounds);
+        if (fitBounds) {
+          const bounds = new google.maps.LatLngBounds();
+          path.forEach((point) => bounds.extend(point));
+          map.fitBounds(bounds);
+        }
       } else {
-        console.error("Rota oluşturulamadı");
+        console.error("Rota oluşturulamadı", status);
       }
     });
 
     return () => {
-      directionsRenderer.setMap(null);
       if (polyline) {
         polyline.setMap(null);
       }
@@ -94,18 +92,7 @@ const DrawRoute = ({
     color,
     weight,
     routesLibrary,
-    polyline,
   ]);
-
-  useEffect(() => {
-    if (!map || !polyline) return;
-
-    polyline.setOptions({
-      path: geometry,
-      strokeColor: color,
-      strokeWeight: weight,
-    });
-  }, [map, geometry, color, weight, polyline]);
 
   return null;
 };

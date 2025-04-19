@@ -84,6 +84,7 @@ const DrawRoutePage = () => {
             travelMode="DRIVE"
             color="#000000"
             weight={5}
+            fitBounds={false}
           />
         )}
       </Map>

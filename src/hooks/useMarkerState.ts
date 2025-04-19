@@ -36,7 +36,6 @@ const useMarkerState = () => {
         name: address || "",
       }));
     } catch {
-      // optional: error handling
     } finally {
       setIsGeoCodeLoading(false);
     }
