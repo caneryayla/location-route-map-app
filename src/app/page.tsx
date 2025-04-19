@@ -1,6 +1,7 @@
 "use client";
 
 import LocationCardItem from "@/components/card/LocationCardItem";
+import NotFoundLocationCard from "@/components/card/NotFoundLocationCard";
 import AlertDialog from "@/components/dialog/AlertDialog";
 import { toaster } from "@/components/ui/toaster";
 import { useLocationStore } from "@/store/useLocationStore";
@@ -16,7 +17,6 @@ import {
 } from "@chakra-ui/react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { FaMapMarkedAlt } from "react-icons/fa";
 
 const Page = () => {
   const router = useRouter();
@@ -37,7 +37,7 @@ const Page = () => {
       title: "Başarılı",
       description: "Konum başarıyla silindi.",
       type: "success",
-      duration: 3000,
+      duration: 1500,
     });
   };
 
@@ -104,36 +104,8 @@ const Page = () => {
       )}
 
       {locations?.length === 0 && (
-        <Flex
-          direction="column"
-          align="center"
-          justify="center"
-          bg="gray.50"
-          borderRadius="lg"
-          textAlign="center"
-          minH={"calc(100vh - 56px)"}
-          gap={4}
-        >
-          <FaMapMarkedAlt size={100} color="black" />
-
-          <Text fontSize="2xl" fontWeight="semibold" color="gray.700">
-            Henüz hiç konum eklenmedi.
-          </Text>
-
-          <Text fontSize="md" color="gray.500" maxW="md">
-            Konumlarınızı görüntüleyebilmek için lütfen bir konum ekleyin.
-          </Text>
-
-          <Button
-            size="sm"
-            variant="outline"
-            color="black"
-            borderColor="gray.400"
-            _hover={{ bg: "black", color: "white" }}
-            onClick={() => router.push("/add-location")}
-          >
-            Konum Ekle
-          </Button>
+        <Flex h={"calc(100vh - 56px)"} align="center" justify="center">
+          <NotFoundLocationCard />
         </Flex>
       )}
     </Box>

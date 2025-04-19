@@ -28,11 +28,14 @@ const LocationSelectCard = ({
   onChange,
   onSave,
   onCancel,
+  isLoading = false,
   label = "Konum Bilgileri",
   cancelButtonLabel = "Vazgeç",
   saveButtonLabel = "Kaydet",
-  isLoading = false,
 }: LocationCardProps) => {
+  const isSaveDisabled =
+    isLoading || !marker.name.trim() || !marker.color.trim();
+
   return (
     <Card.Root
       bg="white"
@@ -45,6 +48,7 @@ const LocationSelectCard = ({
       border="none"
       sm={{ width: "400px" }}
       width="80%"
+      zIndex={99}
     >
       <Card.Body gap={3}>
         <Card.Title color="black">{label}</Card.Title>
@@ -58,9 +62,9 @@ const LocationSelectCard = ({
         />
 
         <ColorPickerSelect
+          label="Pin Rengi Seçiniz"
           value={marker.color}
           onChange={(color) => onChange({ ...marker, color })}
-          label="Pin Rengi Seçiniz"
           placeholder="#000000"
           disabled={isLoading}
         />
@@ -74,6 +78,7 @@ const LocationSelectCard = ({
           borderColor="gray.400"
           _hover={{ bg: "black", color: "white" }}
           onClick={onCancel}
+          disabled={isSaveDisabled}
         >
           {cancelButtonLabel}
         </Button>
@@ -86,7 +91,7 @@ const LocationSelectCard = ({
           _hover={{ bg: "black", color: "white" }}
           onClick={onSave}
           loading={isLoading}
-          disabled={isLoading || !marker.name.trim() || !marker.color}
+          disabled={isSaveDisabled}
         >
           {saveButtonLabel}
         </Button>

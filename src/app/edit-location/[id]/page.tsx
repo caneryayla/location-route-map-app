@@ -1,133 +1,107 @@
 "use client";
-import { useLocationStore } from "@/store/useLocationStore";
+
+import { Fragment, useEffect } from "react";
 import {
   APIProvider,
   Map,
   Marker,
   MapMouseEvent,
 } from "@vis.gl/react-google-maps";
-import { Fragment, useEffect, useState } from "react";
+import { useRouter, useParams } from "next/navigation";
+import { useLocationStore } from "@/store/useLocationStore";
 import { toaster } from "@/components/ui/toaster";
 import LocationSelectCard from "@/components/card/LocationSelectCard";
 import { getMarkerIcon } from "@/utils/getMarkerIcon";
-import { useParams, useRouter } from "next/navigation";
+import useMarkerState from "@/hooks/useMarkerState";
+
+const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API ?? "";
+const DEFAULT_LOCATION = { lat: 41.03968590417347, lng: 29.104650958676174 };
 
 const EditLocationPage = () => {
   const router = useRouter();
   const { id } = useParams<{ id: string }>();
-  const { editLocation, locations } = useLocationStore();
-  const API_KEY = process.env.NEXT_PUBLIC_GOOGLE_MAP_API ?? "";
+  const { locations, editLocation } = useLocationStore();
 
-  const defaultLat = 41.03968590417347;
-  const defaultLng = 29.104650958676174;
-  const [isGeoCodeLoading, setIsGeoCodeLoading] = useState(false);
-  const [marker, setMarker] = useState<{
-    lat: number | null;
-    lng: number | null;
-    color: string;
-    name: string;
-  }>({
-    lat: null,
-    lng: null,
-    color: "#000000",
-    name: "",
-  });
+  const {
+    marker,
+    setMarker,
+    resetMarker,
+    isGeoCodeLoading,
+    setAddressByLatLng,
+  } = useMarkerState();
+
+  useEffect(() => {
+    const locationValues = locations.find((loc) => loc.id === id);
+    if (locationValues) {
+      setMarker({
+        lat: locationValues.lat,
+        lng: locationValues.lng,
+        color: locationValues.color || "#000000",
+        name: locationValues.name || "Konum",
+      });
+    }
+  }, [id, locations, setMarker]);
 
   const handleMapClick = async (event: MapMouseEvent) => {
     const clickedLatLng = event.detail?.latLng;
-    if (clickedLatLng) {
-      setMarker((prev) => ({
-        ...prev,
-        lat: clickedLatLng.lat,
-        lng: clickedLatLng.lng,
-      }));
-
-      try {
-        setIsGeoCodeLoading(true);
-        const { lat, lng } = clickedLatLng;
-        const response = await fetch(
-          `https://maps.googleapis.com/maps/api/geocode/json?latlng=${lat},${lng}&key=${API_KEY}`
-        );
-        const data = await response.json();
-        const address = data?.results?.[0]?.formatted_address;
-
-        setMarker((prev) => ({
-          ...prev,
-          name: address || "",
-        }));
-
-        setIsGeoCodeLoading(false);
-      } catch {
-        setIsGeoCodeLoading(false);
-      }
-    }
-  };
-
-  useEffect(() => {
-    const locationValues = locations?.find((loc) => loc?.id === id);
-
-    if (!locationValues) return;
+    if (!clickedLatLng) return;
 
     setMarker({
-      lat: locationValues.lat,
-      lng: locationValues.lng,
-      color: locationValues.color as string,
-      name: locationValues.name || "",
+      ...marker,
+      lat: clickedLatLng.lat,
+      lng: clickedLatLng.lng,
     });
-  }, [id, locations]);
+
+    await setAddressByLatLng(clickedLatLng.lat, clickedLatLng.lng);
+  };
 
   const handleSaveMarker = () => {
     editLocation(id, {
-      id: id,
-      lat: marker.lat as number,
-      lng: marker.lng as number,
+      id,
+      lat: marker.lat ?? 0,
+      lng: marker.lng ?? 0,
       color: marker.color,
       name: marker.name,
     });
 
     toaster.create({
       title: "Başarılı",
-      description: "Konum kaydedildi.",
+      description: "Konum güncellendi.",
       type: "success",
-      duration: 3000,
+      duration: 1500,
     });
   };
 
-  const handleGiveUp = () => {
+  const handleCancel = () => {
+    resetMarker();
     router.back();
   };
 
   return (
     <APIProvider apiKey={API_KEY}>
       <Map
-        style={{
-          width: "100vw",
-          height: "calc(100vh - 56px)",
-        }}
-        defaultCenter={{ lat: defaultLat, lng: defaultLng }}
+        style={{ width: "100vw", height: "calc(100vh - 56px)" }}
+        defaultCenter={DEFAULT_LOCATION}
         defaultZoom={10}
-        gestureHandling={"greedy"}
-        disableDefaultUI={true}
+        gestureHandling="greedy"
+        disableDefaultUI
         onClick={handleMapClick}
       >
-        {marker?.lat && marker?.lng && (
+        {marker.lat && marker.lng && (
           <Fragment>
             <Marker
-              position={{
-                lat: marker?.lat as number,
-                lng: marker?.lng as number,
-              }}
-              draggable={false}
+              position={{ lat: marker.lat, lng: marker.lng }}
               icon={getMarkerIcon(marker.color)}
             />
-
             <LocationSelectCard
               marker={marker}
               onChange={setMarker}
               onSave={handleSaveMarker}
-              onCancel={handleGiveUp}
+              onCancel={handleCancel}
               isLoading={isGeoCodeLoading}
               label="Konumu Düzenle"
+              saveButtonLabel="Güncelle"
+              cancelButtonLabel="İptal"
             />
           </Fragment>
         )}

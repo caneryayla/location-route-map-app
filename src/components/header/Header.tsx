@@ -1,39 +1,52 @@
 "use client";
 
-import {
-  Box,
-  Flex,
-  Text,
-  Drawer,
-  useBreakpointValue,
-  Portal,
-  Button,
-} from "@chakra-ui/react";
+import { Box, Flex, Text, useBreakpointValue } from "@chakra-ui/react";
 import { useRouter, usePathname } from "next/navigation";
 import { FaMapMarkerAlt } from "react-icons/fa";
-import { RxTextAlignJustify } from "react-icons/rx";
-import React, { Fragment, useRef } from "react";
-import { FaAngleRight } from "react-icons/fa6";
+import React, { useState } from "react";
+import { headerMenuList } from "@/utils/headerMenuList";
+import DrawerMenu from "../drawer/DrawerMenu";
 
 const Header = () => {
   const router = useRouter();
   const pathname = usePathname();
-
-  const ref = useRef<HTMLInputElement>(null);
-
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const isMobile = useBreakpointValue({ base: true, md: false });
-
-  const headerMenu = [
-    { title: "Konum Listesi", route: "/" },
-    { title: "Konum Ekle", route: "/add-location" },
-    { title: "Rota Oluştur", route: "/draw-route" },
-  ];
 
   const handleGoHome = () => router.push("/");
 
   const handleRoute = (route: string) => {
-    router.push(route);
+    if (pathname !== route) router.push(route);
+    setIsDrawerOpen(false);
   };
+
+  const renderMobileMenu = () => (
+    <DrawerMenu
+      listData={headerMenuList}
+      isDrawerOpen={isDrawerOpen}
+      setIsDrawerOpen={setIsDrawerOpen}
+      handleItemPress={(item) => {
+        handleRoute(item.route);
+      }}
+    />
+  );
+
+  const renderDesktopMenu = () => (
+    <Flex gap={4}>
+      {headerMenuList.map((item) => (
+        <Text
+          key={item.route}
+          fontWeight="semibold"
+          color={pathname === item.route ? "red" : "black"}
+          cursor="pointer"
+          _hover={{ color: "gray.500" }}
+          onClick={() => handleRoute(item.route)}
+        >
+          {item.title}
+        </Text>
+      ))}
+    </Flex>
+  );
 
   return (
     <Box
@@ -54,69 +67,7 @@ const Header = () => {
           </Text>
         </Flex>
 
-        {isMobile ? (
-          <Fragment>
-            <Drawer.Root placement={"end"} initialFocusEl={() => ref.current}>
-              <Drawer.Trigger asChild>
-                <Box cursor={"pointer"}>
-                  <RxTextAlignJustify size={28} color="black" />
-                </Box>
-              </Drawer.Trigger>
-              <Portal>
-                <Drawer.Backdrop />
-                <Drawer.Positioner>
-                  <Drawer.Content bg={"white"}>
-                    <Drawer.Body>
-                      <Flex
-                        gap={2}
-                        flexDirection="column"
-                        alignItems={"flex-start"}
-                      >
-                        {headerMenu.map((item) => {
-                          const isActive = pathname === item.route;
-                          return (
-                            <Button
-                              key={item.route}
-                              fontWeight="semibold"
-                              color={isActive ? "red" : "black"}
-                              _hover={{ color: "gray.500", cursor: "pointer" }}
-                              w={"full"}
-                              size="lg"
-                              borderBottom={"1px solid #e2e8f0"}
-                              alignItems={"center"}
-                              justifyContent={"space-between"}
-                              onClick={() => handleRoute(item.route)}
-                            >
-                              {item.title}
-                              <FaAngleRight size={20} color="gray" />
-                            </Button>
-                          );
-                        })}
-                      </Flex>
-                    </Drawer.Body>
-                  </Drawer.Content>
-                </Drawer.Positioner>
-              </Portal>
-            </Drawer.Root>
-          </Fragment>
-        ) : (
-          <Flex gap={4}>
-            {headerMenu.map((item) => {
-              const isActive = pathname === item.route;
-              return (
-                <Text
-                  key={item.route}
-                  fontWeight="semibold"
-                  color={isActive ? "red" : "black"}
-                  _hover={{ color: "gray.500", cursor: "pointer" }}
-                  onClick={() => handleRoute(item.route)}
-                >
-                  {item.title}
-                </Text>
-              );
-            })}
-          </Flex>
-        )}
+        {isMobile ? renderMobileMenu() : renderDesktopMenu()}
       </Flex>
     </Box>
   );
