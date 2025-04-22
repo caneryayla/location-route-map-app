@@ -81,6 +81,7 @@ const Page = () => {
               xl: "repeat(4, 1fr)",
             }}
             gap={6}
+            w={"full"}
           >
             {locations?.map((location) => (
               <GridItem key={location?.id}>
